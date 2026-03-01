@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>파이썬 마스터 - 완전 입문 교재</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --accent3: #8b5cf6;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #475569;
+    --code-bg: #0d1117;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .logo {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-title {
+    font-size: 20px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .progress-bar-wrap {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text2);
+    margin-bottom: 6px;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .nav-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  .nav-scroll::-webkit-scrollbar { width: 4px; }
+  .nav-scroll::-webkit-scrollbar-track { background: transparent; }
+  .nav-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .chapter-group { margin-bottom: 4px; }
+
+  .chapter-header {
+    padding: 8px 20px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .chapter-badge {
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .badge-basic { background: rgba(16,185,129,0.15); color: var(--green); }
+  .badge-mid { background: rgba(245,158,11,0.15); color: var(--yellow); }
+  .badge-adv { background: rgba(139,92,246,0.15); color: var(--accent3); }
+
+  .nav-item {
+    padding: 9px 20px 9px 28px;
+    font-size: 13px;
+    color: var(--text2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.15s;
+    position: relative;
+    border-left: 2px solid transparent;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+
+  .nav-item.active {
+    background: rgba(59,130,246,0.1);
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  .nav-item.completed .nav-check { color: var(--green); }
+
+  .nav-check {
+    font-size: 12px;
+    margin-left: auto;
+    color: var(--text3);
+  }
+
+  /* ── MAIN ── */
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .topbar {
+    padding: 14px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .chapter-tag {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text3);
+    background: var(--surface2);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .lesson-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .topbar-actions { display: flex; gap: 8px; }
+
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: #2563eb; }
+
+  .btn-green {
+    background: var(--green);
+    color: white;
+  }
+  .btn-green:hover { background: #059669; }
+
+  /* ── CONTENT ── */
+  #content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 40px;
+  }
+
+  #content::-webkit-scrollbar { width: 6px; }
+  #content::-webkit-scrollbar-track { background: transparent; }
+  #content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .lesson-section {
+    max-width: 800px;
+    margin: 0 auto;
+    display: none;
+  }
+
+  .lesson-section.visible { display: block; }
+
+  .section-title {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .section-desc {
+    color: var(--text2);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .content-block { margin-bottom: 28px; }
+
+  .content-block h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .content-block h3::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .content-block p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text2);
+    margin-bottom: 10px;
+  }
+
+  .highlight {
+    background: rgba(59,130,246,0.12);
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #93c5fd;
+  }
+
+  .tip-box {
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: #6ee7b7;
+    display: flex;
+    gap: 8px;
+  }
+
+  .warn-box {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: #fcd34d;
+    display: flex;
+    gap: 8px;
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 14px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .code-header {
+    padding: 8px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .code-lang {
+    font-size: 11px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .code-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  .copy-btn {
+    font-size: 11px;
+    color: var(--text3);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 6px;
+    border-radius: 3px;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--border); color: var(--text); }
+
+  .code-content {
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre;
+    color: #e2e8f0;
+  }
+
+  .kw { color: #ff79c6; }
+  .fn { color: #50fa7b; }
+  .str { color: #f1fa8c; }
+  .num { color: #bd93f9; }
+  .cm { color: #6272a4; font-style: italic; }
+  .op { color: #ff79c6; }
+  .var { color: #8be9fd; }
+
+  /* ── QUIZ ── */
+  .quiz-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .quiz-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .quiz-q {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+
+  .quiz-opt {
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text2);
+  }
+
+  .quiz-opt:hover { border-color: var(--accent); color: var(--text); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(16,185,129,0.1); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--red); background: rgba(239,68,68,0.1); color: var(--red); }
+
+  .opt-letter {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+
+  .quiz-result {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    display: none;
+  }
+
+  .quiz-result.show { display: block; }
+  .quiz-result.ok { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .quiz-result.fail { background: rgba(239,68,68,0.08); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+
+  /* ── PRACTICE ── */
+  .practice-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+
+  .practice-header {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .practice-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .practice-task {
+    padding: 14px 20px;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-editor {
+    padding: 0;
+    position: relative;
+  }
+
+  .editor-area {
+    width: 100%;
+    min-height: 100px;
+    background: var(--code-bg);
+    border: none;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 16px;
+    resize: vertical;
+    outline: none;
+  }
+
+  .editor-actions {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+  }
+
+  .output-area {
+    border-top: 1px solid var(--border);
+    background: #070b14;
+    padding: 12px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #a3e635;
+    min-height: 40px;
+    display: none;
+    white-space: pre-wrap;
+  }
+
+  .output-area.show { display: block; }
+
+  /* ── NAV FOOTER ── */
+  .lesson-footer {
+    padding: 20px 40px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+  }
+
+  .lesson-nav {
+    display: flex;
+    gap: 10px;
+  }
+
+  .complete-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  /* ── WELCOME ── */
+  .welcome-hero {
+    text-align: center;
+    padding: 60px 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .hero-emoji { font-size: 56px; margin-bottom: 20px; }
+
+  .hero-title {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.8;
+    margin-bottom: 32px;
+  }
+
+  .curriculum-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 32px 0;
+    text-align: left;
+  }
+
+  .curr-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .curr-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .curr-icon { font-size: 24px; margin-bottom: 8px; }
+  .curr-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .curr-count { font-size: 11px; color: var(--text3); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .lesson-section.visible { animation: fadeIn 0.3s ease; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: var(--surface2); padding: 10px 14px; text-align: left; font-weight: 600; color: var(--text2); font-size: 12px; letter-spacing: 0.5px; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--text2); }
+  tr:last-child td { border-bottom: none; }
+  td code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent2); background: var(--surface2); padding: 1px 5px; border-radius: 3px; }
+
+  .inline-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+    background: var(--surface2);
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── DISCORD MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; width: 480px; max-width: 92vw; padding: 28px;
+    transform: translateY(16px); transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .modal-icon {
+    width: 40px; height: 40px; background: #5865F2;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;
+  }
+  .modal-title { font-size: 17px; font-weight: 800; }
+  .modal-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .modal-close { margin-left: auto; background: none; border: none; color: var(--text3); font-size: 22px; cursor: pointer; line-height:1; }
+  .modal-close:hover { color: var(--text); }
+  .modal-label { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 6px; letter-spacing: 0.5px; }
+  .modal-input {
+    width: 100%; padding: 10px 14px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    outline: none; transition: border-color 0.15s; margin-bottom: 16px; box-sizing: border-box;
+  }
+  .modal-input:focus { border-color: #5865F2; }
+  .modal-input::placeholder { color: var(--text3); }
+  .modal-preview {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px; margin-bottom: 16px;
+    border-left: 4px solid #5865F2; font-size: 13px; line-height: 1.7; color: var(--text2);
+  }
+  .modal-preview strong { color: var(--text); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-discord {
+    background: #5865F2; color: white; padding: 9px 20px; border-radius: 8px;
+    font-size: 13px; font-weight: 700; cursor: pointer; border: none;
+    font-family: 'Noto Sans KR', sans-serif; transition: background 0.15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-discord:hover { background: #4752c4; }
+  .btn-discord:disabled { background: #334155; cursor: not-allowed; }
+  .webhook-help {
+    font-size: 11px; color: var(--text3); margin-bottom: 16px; line-height: 1.6;
+    padding: 10px 12px; background: rgba(88,101,242,0.08);
+    border-radius: 6px; border: 1px solid rgba(88,101,242,0.2);
+  }
+  .webhook-help code { color: #a5b4fc; font-family: 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<div id="sidebar">
+  <div class="logo">
+    <div class="logo-title">🐍 Python Master</div>
+    <div class="logo-sub">// 완전 입문 코딩 교재</div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>학습 진도</span>
+      <span id="progress-text">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="nav-scroll">
+    <!-- HOME -->
+    <div class="chapter-group">
+      <div class="nav-item active" data-lesson="home" onclick="showLesson('home',this)">
+        <span>🏠</span> 시작하기
+      </div>
+    </div>
+
+    <!-- BASIC -->
+    <div class="chapter-group">
+      <div class="chapter-header">
+        <span>기초 과정</span>
+        <span class="chapter-badge badge-basic">BASIC</span>
+      </div>
+      <div class="nav-item" data-lesson="l1" onclick="showLesson('l1',this)">
+        <span>01</span> 파이썬이란?
+        <span class="nav-check" id="chk-l1">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l2" onclick="showLesson('l2',this)">
+        <span>02</span> 변수와 데이터 타입
+        <span class="nav-check" id="chk-l2">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l3" onclick="showLesson('l3',this)">
+        <span>03</span> 출력과 입력
+        <span class="nav-check" id="chk-l3">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l4" onclick="showLesson('l4',this)">
+        <span>04</span> 연산자
+        <span class="nav-check" id="chk-l4">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l5" onclick="showLesson('l5',this)">
+        <span>05</span> 조건문 (if/else)
+        <span class="nav-check" id="chk-l5">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l6" onclick="showLesson('l6',this)">
+        <span>06</span> 반복문 (for/while)
+        <span class="nav-check" id="chk-l6">○</span>
+      </div>
+    </div>
+
+    <!-- MID -->
+    <div class="chapter-group">
+      <div class="chapter-header">
+        <span>활용 과정</span>
+        <span class="chapter-badge badge-mid">MID</span>
+      </div>
+      <div class="nav-item" data-lesson="l7" onclick="showLesson('l7',this)">
+        <span>07</span> 리스트와 튜플
+        <span class="nav-check" id="chk-l7">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l8" onclick="showLesson('l8',this)">
+        <span>08</span> 딕셔너리와 집합
+        <span class="nav-check" id="chk-l8">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l9" onclick="showLesson('l9',this)">
+        <span>09</span> 함수 만들기
+        <span class="nav-check" id="chk-l9">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l10" onclick="showLesson('l10',this)">
+        <span>10</span> 문자열 다루기
+        <span class="nav-check" id="chk-l10">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l11" onclick="showLesson('l11',this)">
+        <span>11</span> 파일 입출력
+        <span class="nav-check" id="chk-l11">○</span>
+      </div>
+    </div>
+
+    <!-- ADV -->
+    <div class="chapter-group">
+      <div class="chapter-header">
+        <span>심화 과정</span>
+        <span class="chapter-badge badge-adv">ADV</span>
+      </div>
+      <div class="nav-item" data-lesson="l12" onclick="showLesson('l12',this)">
+        <span>12</span> 클래스와 객체 (OOP)
+        <span class="nav-check" id="chk-l12">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l13" onclick="showLesson('l13',this)">
+        <span>13</span> 예외 처리
+        <span class="nav-check" id="chk-l13">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l14" onclick="showLesson('l14',this)">
+        <span>14</span> 라이브러리 활용
+        <span class="nav-check" id="chk-l14">○</span>
+      </div>
+      <div class="nav-item" data-lesson="l15" onclick="showLesson('l15',this)">
+        <span>15</span> 미니 프로젝트
+        <span class="nav-check" id="chk-l15">○</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div id="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="chapter-tag" id="topbar-tag">HOME</span>
+      <span class="lesson-title" id="topbar-title">파이썬 마스터 교재</span>
+    </div>
+    <div class="topbar-actions">
+      <span id="save-status" style="font-size:11px;color:var(--text3);margin-right:4px;font-family:JetBrains Mono,monospace;align-self:center;"></span>
+      <button class="btn btn-outline" onclick="saveProgress()">💾 저장</button>
+      <button class="btn btn-outline" onclick="resetProgress()">🔄 초기화</button>
+      <button class="btn-discord" onclick="openDiscordModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+        디스코드 전송
+      </button>
+    </div>
+  </div>
+
+  <div id="content">
+
+    <!-- HOME -->
+    <div class="lesson-section visible" id="sec-home">
+      <div class="welcome-hero">
+        <div class="hero-emoji">🐍</div>
+        <div class="hero-title">파이썬<br>완전 정복</div>
+        <div class="hero-desc">
+          코딩을 한 번도 해본 적 없어도 괜찮아요.<br>
+          기초부터 심화까지, 단계별로 차근차근 배워봅시다!
+        </div>
+        <button class="btn btn-primary" style="padding:12px 28px;font-size:14px;" onclick="showLesson('l1',null)">
+          🚀 지금 시작하기
+        </button>
+
+        <div class="curriculum-grid" style="margin-top:40px;">
+          <div class="curr-card" onclick="showLesson('l1',null)">
+            <div class="curr-icon">🟢</div>
+            <div class="curr-name">기초 과정</div>
+            <div class="curr-count">6개 강의 · 변수~반복문</div>
+          </div>
+          <div class="curr-card" onclick="showLesson('l7',null)">
+            <div class="curr-icon">🟡</div>
+            <div class="curr-name">활용 과정</div>
+            <div class="curr-count">5개 강의 · 자료구조~파일</div>
+          </div>
+          <div class="curr-card" onclick="showLesson('l12',null)">
+            <div class="curr-icon">🟣</div>
+            <div class="curr-name">심화 과정</div>
+            <div class="curr-count">4개 강의 · OOP~프로젝트</div>
+          </div>
+        </div>
+
+        <div class="tip-box" style="text-align:left;margin-top:24px;">
+          <span>💡</span>
+          <span>학습 진도는 자동으로 저장됩니다. 언제든지 이어서 학습할 수 있어요!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LESSON 1 -->
+    <div class="lesson-section" id="sec-l1">
+      <div class="section-title">01. 파이썬이란?</div>
+      <div class="section-desc">파이썬(Python)은 세계에서 가장 인기 있는 프로그래밍 언어 중 하나입니다. 읽기 쉽고, 배우기 쉽고, 강력합니다.</div>
+
+      <div class="content-block">
+        <h3>파이썬이 뭔가요?</h3>
+        <p>프로그래밍 언어란 컴퓨터에게 명령을 내리는 언어입니다. 우리가 한국어나 영어로 대화하듯, 컴퓨터에게는 파이썬 같은 언어로 말을 걸어요.</p>
+        <div class="highlight">
+          🐍 파이썬은 1991년 귀도 반 로섬이 만든 언어로, 문법이 영어와 비슷해서 초보자도 쉽게 배울 수 있습니다.
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>파이썬으로 무엇을 할 수 있나요?</h3>
+        <table>
+          <tr><th>분야</th><th>예시</th></tr>
+          <tr><td>🌐 웹 개발</td><td>인스타그램, 유튜브 백엔드</td></tr>
+          <tr><td>🤖 인공지능 / 데이터</td><td>ChatGPT, 추천 알고리즘</td></tr>
+          <tr><td>🔬 과학 / 연구</td><td>데이터 분석, 시뮬레이션</td></tr>
+          <tr><td>🎮 게임</td><td>간단한 2D 게임 개발</td></tr>
+          <tr><td>🤖 자동화</td><td>반복 작업 자동화, 크롤링</td></tr>
+        </table>
+      </div>
+
+      <div class="content-block">
+        <h3>첫 번째 파이썬 코드</h3>
+        <p>파이썬의 전통적인 첫 번째 코드는 "Hello, World!"를 출력하는 것입니다.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="code-dot"></span>Python</span>
+            <button class="copy-btn" onclick="copyCode(this)">복사</button>
+          </div>
+          <div class="code-content"><span class="fn">print</span>(<span class="str">"Hello, World!"</span>)
+<span class="fn">print</span>(<span class="str">"안녕하세요, 파이썬!"</span>)</div>
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang"><span class="code-dot" style="background:var(--green)"></span>출력 결과</span>
+          </div>
+          <div class="code-content" style="color:#a3e635;">Hello, World!
+안녕하세요, 파이썬!</div>
+        </div>
+        <div class="tip-box"><span>💡</span><span><strong>print()</strong>는 화면에 텍스트를 출력하는 명령어입니다. 괄호 안에 출력하고 싶은 내용을 넣으면 돼요!</span></div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 01</div>
+        <div class="quiz-q">파이썬에서 화면에 텍스트를 출력하는 명령어는 무엇인가요?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l1q1')"><span class="opt-letter">A</span>output("Hello")</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l1q1')"><span class="opt-letter">B</span>print("Hello")</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l1q1')"><span class="opt-letter">C</span>show("Hello")</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l1q1')"><span class="opt-letter">D</span>display("Hello")</div>
+        </div>
+        <div class="quiz-result" id="l1q1">✅ 정답! <code>print()</code>는 파이썬에서 가장 기본적인 출력 함수입니다.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 2 -->
+    <div class="lesson-section" id="sec-l2">
+      <div class="section-title">02. 변수와 데이터 타입</div>
+      <div class="section-desc">변수는 데이터를 저장하는 상자입니다. 파이썬에는 다양한 종류의 데이터가 있어요.</div>
+
+      <div class="content-block">
+        <h3>변수란?</h3>
+        <p>변수(Variable)는 데이터를 담아두는 이름표가 달린 상자입니다. <span class="inline-code">=</span> 기호로 값을 저장해요.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="cm"># 변수에 값 저장하기</span>
+<span class="var">name</span> = <span class="str">"김파이썬"</span>      <span class="cm"># 문자열</span>
+<span class="var">age</span> = <span class="num">20</span>             <span class="cm"># 정수</span>
+<span class="var">height</span> = <span class="num">175.5</span>       <span class="cm"># 소수</span>
+<span class="var">is_student</span> = <span class="kw">True</span>   <span class="cm"># 참/거짓</span>
+
+<span class="fn">print</span>(<span class="var">name</span>)
+<span class="fn">print</span>(<span class="var">age</span>)
+<span class="fn">print</span>(<span class="var">height</span>)
+<span class="fn">print</span>(<span class="var">is_student</span>)</div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>데이터 타입 4가지</h3>
+        <table>
+          <tr><th>타입</th><th>이름</th><th>예시</th><th>설명</th></tr>
+          <tr><td><code>str</code></td><td>문자열</td><td><code>"안녕"</code>, <code>'hello'</code></td><td>텍스트 데이터</td></tr>
+          <tr><td><code>int</code></td><td>정수</td><td><code>10</code>, <code>-5</code>, <code>0</code></td><td>소수점 없는 숫자</td></tr>
+          <tr><td><code>float</code></td><td>실수</td><td><code>3.14</code>, <code>-0.5</code></td><td>소수점 있는 숫자</td></tr>
+          <tr><td><code>bool</code></td><td>불리언</td><td><code>True</code>, <code>False</code></td><td>참 또는 거짓</td></tr>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="cm"># type() 로 타입 확인하기</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="str">"안녕"</span>))    <span class="cm"># &lt;class 'str'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="num">42</span>))      <span class="cm"># &lt;class 'int'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="num">3.14</span>))    <span class="cm"># &lt;class 'float'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="kw">True</span>))    <span class="cm"># &lt;class 'bool'&gt;</span></div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>변수 이름 규칙</h3>
+        <div class="tip-box"><span>✅</span><span>영문자, 숫자, 밑줄(_) 사용 가능 · 숫자로 시작 불가 · 대소문자 구분</span></div>
+        <div class="warn-box"><span>⚠️</span><span><code>1name</code>, <code>my-var</code>, <code>class</code>(예약어) 등은 사용 불가!</span></div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 02</div>
+        <div class="quiz-q">다음 중 올바른 변수명은?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l2q1')"><span class="opt-letter">A</span>1_name</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l2q1')"><span class="opt-letter">B</span>my-age</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l2q1')"><span class="opt-letter">C</span>my_age</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l2q1')"><span class="opt-letter">D</span>class</div>
+        </div>
+        <div class="quiz-result" id="l2q1">✅ 정답! <code>my_age</code>처럼 밑줄(_)로 단어를 연결하는 방식을 snake_case라고 합니다.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 3 -->
+    <div class="lesson-section" id="sec-l3">
+      <div class="section-title">03. 출력과 입력</div>
+      <div class="section-desc">사용자와 소통하는 방법을 배웁니다. print()로 출력하고, input()으로 사용자의 입력을 받을 수 있어요.</div>
+
+      <div class="content-block">
+        <h3>print() 완전 정복</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="cm"># 여러 값 출력 (쉼표로 구분)</span>
+<span class="var">name</span> = <span class="str">"이수진"</span>
+<span class="var">age</span> = <span class="num">25</span>
+<span class="fn">print</span>(<span class="str">"이름:"</span>, <span class="var">name</span>, <span class="str">"나이:"</span>, <span class="var">age</span>)
+
+<span class="cm"># f-string (가장 많이 쓰는 방법!)</span>
+<span class="fn">print</span>(<span class="str">f"안녕하세요, {<span class="var">name</span>}님! 나이는 {<span class="var">age</span>}살이네요."</span>)
+
+<span class="cm"># end, sep 옵션</span>
+<span class="fn">print</span>(<span class="str">"사과"</span>, <span class="str">"바나나"</span>, <span class="str">"포도"</span>, sep=<span class="str">" | "</span>)
+<span class="fn">print</span>(<span class="str">"끝에 느낌표"</span>, end=<span class="str">"!\n"</span>)</div>
+        </div>
+        <div class="highlight">💡 f-string: 문자열 앞에 <strong>f</strong>를 붙이고 중괄호 {} 안에 변수를 넣으면 값이 출력됩니다!</div>
+      </div>
+
+      <div class="content-block">
+        <h3>input() - 사용자 입력 받기</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="cm"># 사용자에게 이름을 입력받기</span>
+<span class="var">name</span> = <span class="fn">input</span>(<span class="str">"이름을 입력하세요: "</span>)
+<span class="fn">print</span>(<span class="str">f"안녕하세요, {<span class="var">name</span>}님!"</span>)
+
+<span class="cm"># 숫자 입력받기 (input은 항상 문자열이므로 변환 필요!)</span>
+<span class="var">age</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"나이를 입력하세요: "</span>))
+<span class="fn">print</span>(<span class="str">f"내년에는 {<span class="var">age</span> + <span class="num">1</span>}살이 됩니다."</span>)</div>
+        </div>
+        <div class="warn-box"><span>⚠️</span><span>input()은 항상 <strong>문자열(str)</strong>로 받습니다. 숫자로 쓰려면 int() 또는 float()로 변환해야 해요!</span></div>
+      </div>
+
+      <div class="practice-box">
+        <div class="practice-header">
+          <span class="practice-title">✏️ PRACTICE · 실습해보기</span>
+        </div>
+        <div class="practice-task">
+          이름과 나이를 변수로 저장하고, f-string을 이용해 "<strong>저는 [이름]이고, [나이]살입니다.</strong>" 라고 출력해보세요.
+        </div>
+        <div class="code-editor">
+          <textarea class="editor-area" placeholder="# 여기에 코드를 작성해보세요!
+name = 
+age = 
+print(f&quot;...&quot;)"></textarea>
+        </div>
+        <div class="editor-actions">
+          <button class="btn btn-primary" onclick="runCode(this)">▶ 실행 (시뮬레이션)</button>
+          <button class="btn btn-outline" onclick="showHint(this,'name = &quot;김철수&quot;\nage = 20\nprint(f&quot;저는 {name}이고, {age}살입니다.&quot;)')">💡 힌트</button>
+        </div>
+        <div class="output-area"></div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 03</div>
+        <div class="quiz-q">input()으로 받은 값의 기본 데이터 타입은?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l3q1')"><span class="opt-letter">A</span>int (정수)</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l3q1')"><span class="opt-letter">B</span>str (문자열)</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l3q1')"><span class="opt-letter">C</span>float (실수)</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l3q1')"><span class="opt-letter">D</span>bool (불리언)</div>
+        </div>
+        <div class="quiz-result" id="l3q1">✅ 정답! input()은 항상 문자열로 반환합니다. 숫자로 쓰려면 int()나 float()로 변환해야 해요.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 4 -->
+    <div class="lesson-section" id="sec-l4">
+      <div class="section-title">04. 연산자</div>
+      <div class="section-desc">파이썬에서 사용할 수 있는 다양한 연산자를 배웁니다. 수학 계산부터 비교, 논리 연산까지!</div>
+
+      <div class="content-block">
+        <h3>산술 연산자</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="var">a</span>, <span class="var">b</span> = <span class="num">10</span>, <span class="num">3</span>
+
+<span class="fn">print</span>(<span class="var">a</span> + <span class="var">b</span>)   <span class="cm"># 13  (더하기)</span>
+<span class="fn">print</span>(<span class="var">a</span> - <span class="var">b</span>)   <span class="cm"># 7   (빼기)</span>
+<span class="fn">print</span>(<span class="var">a</span> * <span class="var">b</span>)   <span class="cm"># 30  (곱하기)</span>
+<span class="fn">print</span>(<span class="var">a</span> / <span class="var">b</span>)   <span class="cm"># 3.3333... (나누기)</span>
+<span class="fn">print</span>(<span class="var">a</span> // <span class="var">b</span>)  <span class="cm"># 3   (몫)</span>
+<span class="fn">print</span>(<span class="var">a</span> % <span class="var">b</span>)   <span class="cm"># 1   (나머지)</span>
+<span class="fn">print</span>(<span class="var">a</span> ** <span class="var">b</span>)  <span class="cm"># 1000 (거듭제곱)</span></div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>비교 연산자</h3>
+        <p>두 값을 비교해서 True 또는 False를 반환합니다.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="fn">print</span>(<span class="num">5</span> == <span class="num">5</span>)   <span class="cm"># True  (같다)</span>
+<span class="fn">print</span>(<span class="num">5</span> != <span class="num">3</span>)   <span class="cm"># True  (다르다)</span>
+<span class="fn">print</span>(<span class="num">5</span> > <span class="num">3</span>)    <span class="cm"># True  (크다)</span>
+<span class="fn">print</span>(<span class="num">5</span> < <span class="num">3</span>)    <span class="cm"># False (작다)</span>
+<span class="fn">print</span>(<span class="num">5</span> >= <span class="num">5</span>)   <span class="cm"># True  (크거나 같다)</span>
+<span class="fn">print</span>(<span class="num">5</span> <= <span class="num">4</span>)   <span class="cm"># False (작거나 같다)</span></div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>논리 연산자</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="fn">print</span>(<span class="kw">True</span> <span class="kw">and</span> <span class="kw">False</span>)  <span class="cm"># False (둘 다 True여야 True)</span>
+<span class="fn">print</span>(<span class="kw">True</span> <span class="kw">or</span> <span class="kw">False</span>)   <span class="cm"># True  (하나만 True여도 True)</span>
+<span class="fn">print</span>(<span class="kw">not</span> <span class="kw">True</span>)        <span class="cm"># False (반대로!)</span>
+
+<span class="cm"># 실제 사용 예시</span>
+<span class="var">age</span> = <span class="num">20</span>
+<span class="fn">print</span>(<span class="var">age</span> >= <span class="num">18</span> <span class="kw">and</span> <span class="var">age</span> <= <span class="num">65</span>)  <span class="cm"># True (성인)</span></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 04</div>
+        <div class="quiz-q">10 % 3 의 결과값은?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l4q1')"><span class="opt-letter">A</span>0</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l4q1')"><span class="opt-letter">B</span>1</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l4q1')"><span class="opt-letter">C</span>3</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l4q1')"><span class="opt-letter">D</span>3.33</div>
+        </div>
+        <div class="quiz-result" id="l4q1">✅ 정답! %는 나머지 연산자입니다. 10을 3으로 나누면 몫은 3, 나머지는 1이에요.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 5 -->
+    <div class="lesson-section" id="sec-l5">
+      <div class="section-title">05. 조건문 (if/else)</div>
+      <div class="section-desc">조건에 따라 다른 코드를 실행하는 방법입니다. 프로그래밍의 핵심 개념!</div>
+
+      <div class="content-block">
+        <h3>if / elif / else 구조</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="var">age</span> = <span class="num">17</span>
+
+<span class="kw">if</span> <span class="var">age</span> >= <span class="num">18</span>:
+    <span class="fn">print</span>(<span class="str">"성인입니다."</span>)
+<span class="kw">elif</span> <span class="var">age</span> >= <span class="num">14</span>:
+    <span class="fn">print</span>(<span class="str">"청소년입니다."</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"어린이입니다."</span>)</div>
+        </div>
+        <div class="highlight">⚠️ 파이썬에서는 들여쓰기(indent)가 매우 중요합니다! if 아래 실행할 코드는 반드시 4칸 들여쓰기를 해야 해요.</div>
+      </div>
+
+      <div class="content-block">
+        <h3>중첩 조건문</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="var">score</span> = <span class="num">85</span>
+
+<span class="kw">if</span> <span class="var">score</span> >= <span class="num">90</span>:
+    <span class="fn">print</span>(<span class="str">"A학점"</span>)
+<span class="kw">elif</span> <span class="var">score</span> >= <span class="num">80</span>:
+    <span class="fn">print</span>(<span class="str">"B학점"</span>)
+<span class="kw">elif</span> <span class="var">score</span> >= <span class="num">70</span>:
+    <span class="fn">print</span>(<span class="str">"C학점"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"F학점"</span>)
+
+<span class="cm"># 출력: B학점</span></div>
+        </div>
+      </div>
+
+      <div class="practice-box">
+        <div class="practice-header">
+          <span class="practice-title">✏️ PRACTICE</span>
+        </div>
+        <div class="practice-task">
+          온도를 변수로 저장하고, 30도 이상이면 "더워요!", 10도 이하면 "추워요!", 그 사이면 "적당해요!" 를 출력하는 코드를 작성하세요.
+        </div>
+        <div class="code-editor">
+          <textarea class="editor-area" placeholder="temp = 25
+
+if temp >= 30:
+    ..."></textarea>
+        </div>
+        <div class="editor-actions">
+          <button class="btn btn-primary" onclick="runCode(this)">▶ 실행</button>
+          <button class="btn btn-outline" onclick="showHint(this,'temp = 25\n\nif temp >= 30:\n    print(&quot;더워요!&quot;)\nelif temp <= 10:\n    print(&quot;추워요!&quot;)\nelse:\n    print(&quot;적당해요!&quot;)')">💡 힌트</button>
+        </div>
+        <div class="output-area"></div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 05</div>
+        <div class="quiz-q">파이썬에서 "그 외 모든 경우"를 처리하는 키워드는?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l5q1')"><span class="opt-letter">A</span>elif</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l5q1')"><span class="opt-letter">B</span>else</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l5q1')"><span class="opt-letter">C</span>otherwise</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l5q1')"><span class="opt-letter">D</span>default</div>
+        </div>
+        <div class="quiz-result" id="l5q1">✅ 정답! else는 앞의 모든 조건이 False일 때 실행됩니다.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 6 -->
+    <div class="lesson-section" id="sec-l6">
+      <div class="section-title">06. 반복문 (for/while)</div>
+      <div class="section-desc">같은 작업을 여러 번 반복할 때 사용하는 반복문! 코딩을 강력하게 만드는 핵심입니다.</div>
+
+      <div class="content-block">
+        <h3>for 반복문</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="cm"># range()로 숫자 반복</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):       <span class="cm"># 0, 1, 2, 3, 4</span>
+    <span class="fn">print</span>(<span class="str">f"{<span class="var">i</span>}번째 반복!"</span>)
+
+<span class="cm"># 리스트 반복</span>
+<span class="var">fruits</span> = [<span class="str">"사과"</span>, <span class="str">"바나나"</span>, <span class="str">"포도"</span>]
+<span class="kw">for</span> <span class="var">fruit</span> <span class="kw">in</span> <span class="var">fruits</span>:
+    <span class="fn">print</span>(<span class="str">f"나는 {<span class="var">fruit</span>}을 좋아해요!"</span>)
+
+<span class="cm"># range(시작, 끝, 간격)</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">10</span>, <span class="num">2</span>):   <span class="cm"># 1, 3, 5, 7, 9</span>
+    <span class="fn">print</span>(<span class="var">i</span>, end=<span class="str">" "</span>)</div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>while 반복문</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="cm"># 조건이 True인 동안 반복</span>
+<span class="var">count</span> = <span class="num">1</span>
+<span class="kw">while</span> <span class="var">count</span> <= <span class="num">5</span>:
+    <span class="fn">print</span>(<span class="str">f"카운트: {<span class="var">count</span>}"</span>)
+    <span class="var">count</span> += <span class="num">1</span>   <span class="cm"># count = count + 1</span>
+
+<span class="cm"># break와 continue</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>):
+    <span class="kw">if</span> <span class="var">i</span> == <span class="num">5</span>:
+        <span class="kw">break</span>     <span class="cm"># 반복 완전 종료</span>
+    <span class="kw">if</span> <span class="var">i</span> % <span class="num">2</span> == <span class="num">0</span>:
+        <span class="kw">continue</span>  <span class="cm"># 이번 반복 건너뛰기</span>
+    <span class="fn">print</span>(<span class="var">i</span>)</div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 06</div>
+        <div class="quiz-q">range(2, 10, 3)이 생성하는 숫자들은?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l6q1')"><span class="opt-letter">A</span>2, 3, 4, 5, 6, 7, 8, 9</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l6q1')"><span class="opt-letter">B</span>2, 5, 8</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l6q1')"><span class="opt-letter">C</span>2, 4, 6, 8</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l6q1')"><span class="opt-letter">D</span>3, 6, 9</div>
+        </div>
+        <div class="quiz-result" id="l6q1">✅ 정답! range(시작, 끝, 간격) → 2부터 시작해서 3씩 증가, 10 전까지: 2, 5, 8</div>
+      </div>
+    </div>
+
+    <!-- LESSON 7 -->
+    <div class="lesson-section" id="sec-l7">
+      <div class="section-title">07. 리스트와 튜플</div>
+      <div class="section-desc">여러 개의 데이터를 하나로 묶어 관리하는 자료구조! 파이썬에서 가장 많이 쓰는 개념입니다.</div>
+
+      <div class="content-block">
+        <h3>리스트 (List)</h3>
+        <p>리스트는 여러 값을 순서대로 저장하는 자료구조입니다. 대괄호 []로 만들어요.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="var">fruits</span> = [<span class="str">"사과"</span>, <span class="str">"바나나"</span>, <span class="str">"포도"</span>, <span class="str">"딸기"</span>]
+
+<span class="cm"># 인덱싱 (0부터 시작!)</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="num">0</span>])    <span class="cm"># 사과</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[-<span class="num">1</span>])   <span class="cm"># 딸기 (마지막)</span>
+
+<span class="cm"># 슬라이싱</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="num">1</span>:<span class="num">3</span>])  <span class="cm"># ['바나나', '포도']</span>
+
+<span class="cm"># 리스트 수정</span>
+<span class="var">fruits</span>.append(<span class="str">"망고"</span>)     <span class="cm"># 끝에 추가</span>
+<span class="var">fruits</span>.insert(<span class="num">1</span>, <span class="str">"키위"</span>) <span class="cm"># 1번 위치에 삽입</span>
+<span class="var">fruits</span>.remove(<span class="str">"바나나"</span>)   <span class="cm"># 해당 값 삭제</span>
+<span class="var">fruits</span>.pop()              <span class="cm"># 마지막 값 제거</span>
+
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="var">fruits</span>))        <span class="cm"># 길이</span>
+<span class="fn">print</span>(<span class="fn">sorted</span>(<span class="var">fruits</span>))     <span class="cm"># 정렬</span></div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>튜플 (Tuple)</h3>
+        <p>튜플은 리스트와 비슷하지만 <strong>변경이 불가능</strong>합니다. 괄호 ()로 만들어요.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="var">point</span> = (<span class="num">10</span>, <span class="num">20</span>)   <span class="cm"># x, y 좌표</span>
+<span class="fn">print</span>(<span class="var">point</span>[<span class="num">0</span>])     <span class="cm"># 10</span>
+
+<span class="cm"># 튜플 언패킹</span>
+<span class="var">x</span>, <span class="var">y</span> = <span class="var">point</span>
+<span class="fn">print</span>(<span class="str">f"x={<span class="var">x</span>}, y={<span class="var">y</span>}"</span>)
+
+<span class="cm"># point[0] = 30  # 오류! 튜플은 변경 불가</span></div>
+        </div>
+        <div class="tip-box"><span>💡</span><span>리스트는 데이터를 자주 바꿀 때, 튜플은 바뀌지 않아야 할 데이터(좌표, 날짜 등)에 사용합니다.</span></div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 07</div>
+        <div class="quiz-q">리스트의 마지막 요소를 가져오는 올바른 방법은?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l7q1')"><span class="opt-letter">A</span>list[last]</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l7q1')"><span class="opt-letter">B</span>list[len]</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l7q1')"><span class="opt-letter">C</span>list[-1]</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l7q1')"><span class="opt-letter">D</span>list.end()</div>
+        </div>
+        <div class="quiz-result" id="l7q1">✅ 정답! 파이썬에서 -1 인덱스는 마지막 요소를 의미합니다. -2는 끝에서 두 번째!</div>
+      </div>
+    </div>
+
+    <!-- LESSON 8 -->
+    <div class="lesson-section" id="sec-l8">
+      <div class="section-title">08. 딕셔너리와 집합</div>
+      <div class="section-desc">키-값 쌍으로 데이터를 저장하는 딕셔너리, 중복 없는 집합! 실무에서 자주 쓰이는 자료구조입니다.</div>
+
+      <div class="content-block">
+        <h3>딕셔너리 (Dictionary)</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="var">person</span> = {
+    <span class="str">"name"</span>: <span class="str">"김파이썬"</span>,
+    <span class="str">"age"</span>: <span class="num">25</span>,
+    <span class="str">"city"</span>: <span class="str">"서울"</span>
+}
+
+<span class="cm"># 값 읽기</span>
+<span class="fn">print</span>(<span class="var">person</span>[<span class="str">"name"</span>])         <span class="cm"># 김파이썬</span>
+<span class="fn">print</span>(<span class="var">person</span>.get(<span class="str">"age"</span>))      <span class="cm"># 25 (없으면 None)</span>
+
+<span class="cm"># 값 추가/수정</span>
+<span class="var">person</span>[<span class="str">"job"</span>] = <span class="str">"개발자"</span>
+<span class="var">person</span>[<span class="str">"age"</span>] = <span class="num">26</span>
+
+<span class="cm"># 반복</span>
+<span class="kw">for</span> <span class="var">key</span>, <span class="var">value</span> <span class="kw">in</span> <span class="var">person</span>.items():
+    <span class="fn">print</span>(<span class="str">f"{<span class="var">key</span>}: {<span class="var">value</span>}"</span>)
+
+<span class="cm"># 키 목록, 값 목록</span>
+<span class="fn">print</span>(<span class="var">person</span>.keys())
+<span class="fn">print</span>(<span class="var">person</span>.values())</div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>집합 (Set)</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="var">nums</span> = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">2</span>, <span class="num">1</span>}
+<span class="fn">print</span>(<span class="var">nums</span>)  <span class="cm"># {1, 2, 3} 중복 제거!</span>
+
+<span class="cm"># 집합 연산</span>
+<span class="var">a</span> = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>}
+<span class="var">b</span> = {<span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>}
+<span class="fn">print</span>(<span class="var">a</span> | <span class="var">b</span>)  <span class="cm"># 합집합: {1,2,3,4,5,6}</span>
+<span class="fn">print</span>(<span class="var">a</span> & <span class="var">b</span>)  <span class="cm"># 교집합: {3,4}</span>
+<span class="fn">print</span>(<span class="var">a</span> - <span class="var">b</span>)  <span class="cm"># 차집합: {1,2}</span></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 08</div>
+        <div class="quiz-q">딕셔너리에서 "key"에 해당하는 값을 가져올 때 올바른 방법은?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l8q1')"><span class="opt-letter">A</span>dict.find("key")</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l8q1')"><span class="opt-letter">B</span>dict["key"] 또는 dict.get("key")</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l8q1')"><span class="opt-letter">C</span>dict(key)</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l8q1')"><span class="opt-letter">D</span>dict.value("key")</div>
+        </div>
+        <div class="quiz-result" id="l8q1">✅ 정답! dict["key"] 또는 dict.get("key")로 접근합니다. get()은 키가 없어도 오류 없이 None을 반환합니다.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 9 -->
+    <div class="lesson-section" id="sec-l9">
+      <div class="section-title">09. 함수 만들기</div>
+      <div class="section-desc">반복되는 코드를 묶어 재사용할 수 있도록 함수로 만들어봅시다!</div>
+
+      <div class="content-block">
+        <h3>함수 기본 구조</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="cm"># 함수 정의</span>
+<span class="kw">def</span> <span class="fn">greet</span>(<span class="var">name</span>):
+    <span class="fn">print</span>(<span class="str">f"안녕하세요, {<span class="var">name</span>}님!"</span>)
+
+<span class="cm"># 함수 호출</span>
+<span class="fn">greet</span>(<span class="str">"홍길동"</span>)
+<span class="fn">greet</span>(<span class="str">"김파이썬"</span>)
+
+<span class="cm"># 반환값이 있는 함수</span>
+<span class="kw">def</span> <span class="fn">add</span>(<span class="var">a</span>, <span class="var">b</span>):
+    <span class="kw">return</span> <span class="var">a</span> + <span class="var">b</span>
+
+<span class="var">result</span> = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">5</span>)
+<span class="fn">print</span>(<span class="var">result</span>)  <span class="cm"># 8</span></div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>기본값 매개변수 & 여러 반환값</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="cm"># 기본값 설정</span>
+<span class="kw">def</span> <span class="fn">power</span>(<span class="var">base</span>, <span class="var">exp</span>=<span class="num">2</span>):
+    <span class="kw">return</span> <span class="var">base</span> ** <span class="var">exp</span>
+
+<span class="fn">print</span>(<span class="fn">power</span>(<span class="num">3</span>))     <span class="cm"># 9 (3²)</span>
+<span class="fn">print</span>(<span class="fn">power</span>(<span class="num">2</span>, <span class="num">3</span>))  <span class="cm"># 8 (2³)</span>
+
+<span class="cm"># 여러 값 반환</span>
+<span class="kw">def</span> <span class="fn">min_max</span>(<span class="var">nums</span>):
+    <span class="kw">return</span> <span class="fn">min</span>(<span class="var">nums</span>), <span class="fn">max</span>(<span class="var">nums</span>)
+
+<span class="var">low</span>, <span class="var">high</span> = <span class="fn">min_max</span>([<span class="num">3</span>, <span class="num">1</span>, <span class="num">7</span>, <span class="num">2</span>])
+<span class="fn">print</span>(<span class="str">f"최소: {<span class="var">low</span>}, 최대: {<span class="var">high</span>}"</span>)</div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 09</div>
+        <div class="quiz-q">함수에서 값을 반환할 때 사용하는 키워드는?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l9q1')"><span class="opt-letter">A</span>output</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l9q1')"><span class="opt-letter">B</span>send</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l9q1')"><span class="opt-letter">C</span>return</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l9q1')"><span class="opt-letter">D</span>give</div>
+        </div>
+        <div class="quiz-result" id="l9q1">✅ 정답! return 키워드로 함수의 결과값을 돌려줍니다.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 10 -->
+    <div class="lesson-section" id="sec-l10">
+      <div class="section-title">10. 문자열 다루기</div>
+      <div class="section-desc">파이썬의 강력한 문자열 처리 기능을 배웁니다. 텍스트를 마음대로 조작해보세요!</div>
+
+      <div class="content-block">
+        <h3>주요 문자열 메서드</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="var">text</span> = <span class="str">"  Hello, Python World!  "</span>
+
+<span class="fn">print</span>(<span class="var">text</span>.strip())          <span class="cm"># 앞뒤 공백 제거</span>
+<span class="fn">print</span>(<span class="var">text</span>.upper())          <span class="cm"># 대문자</span>
+<span class="fn">print</span>(<span class="var">text</span>.lower())          <span class="cm"># 소문자</span>
+<span class="fn">print</span>(<span class="var">text</span>.replace(<span class="str">"Python"</span>, <span class="str">"파이썬"</span>))
+
+<span class="var">s</span> = <span class="str">"사과,바나나,포도"</span>
+<span class="fn">print</span>(<span class="var">s</span>.split(<span class="str">","</span>))          <span class="cm"># ['사과','바나나','포도']</span>
+<span class="fn">print</span>(<span class="str">" | "</span>.join([<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>])) <span class="cm"># A | B | C</span>
+
+<span class="fn">print</span>(<span class="str">"Python"</span>.startswith(<span class="str">"Py"</span>))  <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="str">"Python"</span>.endswith(<span class="str">"on"</span>))    <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="str">"Hello"</span>.find(<span class="str">"ll"</span>))         <span class="cm"># 2 (위치)</span>
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="str">"안녕하세요"</span>))              <span class="cm"># 5</span></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 10</div>
+        <div class="quiz-q">"apple,banana,grape".split(",") 의 결과는?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l10q1')"><span class="opt-letter">A</span>"apple banana grape"</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l10q1')"><span class="opt-letter">B</span>["apple", "banana", "grape"]</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l10q1')"><span class="opt-letter">C</span>("apple", "banana", "grape")</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l10q1')"><span class="opt-letter">D</span>{"apple", "banana", "grape"}</div>
+        </div>
+        <div class="quiz-result" id="l10q1">✅ 정답! split()은 구분자로 문자열을 나눠 리스트로 반환합니다.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 11 -->
+    <div class="lesson-section" id="sec-l11">
+      <div class="section-title">11. 파일 입출력</div>
+      <div class="section-desc">파일을 읽고 쓰는 방법을 배웁니다. 데이터를 파일로 저장하고 불러올 수 있어요!</div>
+
+      <div class="content-block">
+        <h3>파일 쓰기</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="cm"># 파일 쓰기 (w: 쓰기, a: 추가, r: 읽기)</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"hello.txt"</span>, <span class="str">"w"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">f</span>.write(<span class="str">"안녕하세요!\n"</span>)
+    <span class="var">f</span>.write(<span class="str">"파이썬 파일 입출력 예제입니다.\n"</span>)
+
+<span class="cm"># 파일 읽기</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"hello.txt"</span>, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">content</span> = <span class="var">f</span>.read()
+    <span class="fn">print</span>(<span class="var">content</span>)
+
+<span class="cm"># 줄 단위로 읽기</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"hello.txt"</span>, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="kw">for</span> <span class="var">line</span> <span class="kw">in</span> <span class="var">f</span>:
+        <span class="fn">print</span>(<span class="var">line</span>.strip())</div>
+        </div>
+        <div class="tip-box"><span>💡</span><span><code>with</code> 구문을 쓰면 파일을 자동으로 닫아줘서 훨씬 안전합니다. 항상 with를 사용하세요!</span></div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 11</div>
+        <div class="quiz-q">파일을 열 때 기존 내용을 유지하고 뒤에 추가하려면 어떤 모드를 사용하나요?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l11q1')"><span class="opt-letter">A</span>"w" (write)</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l11q1')"><span class="opt-letter">B</span>"r" (read)</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l11q1')"><span class="opt-letter">C</span>"a" (append)</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l11q1')"><span class="opt-letter">D</span>"x" (exclusive)</div>
+        </div>
+        <div class="quiz-result" id="l11q1">✅ 정답! "a" (append) 모드는 기존 파일 내용을 유지하면서 뒤에 내용을 추가합니다.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 12 -->
+    <div class="lesson-section" id="sec-l12">
+      <div class="section-title">12. 클래스와 객체 (OOP)</div>
+      <div class="section-desc">객체지향 프로그래밍(OOP)! 현실 세계를 코드로 모델링하는 강력한 패러다임입니다.</div>
+
+      <div class="content-block">
+        <h3>클래스란?</h3>
+        <p>클래스는 객체를 만드는 설계도입니다. 예를 들어 "강아지"라는 클래스를 만들면 여러 강아지 객체를 만들 수 있어요.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="kw">class</span> <span class="fn">Dog</span>:
+    <span class="cm"># 생성자: 객체가 만들어질 때 실행</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, <span class="var">name</span>, <span class="var">breed</span>):
+        <span class="var">self</span>.name = <span class="var">name</span>   <span class="cm"># 속성(attribute)</span>
+        <span class="var">self</span>.breed = <span class="var">breed</span>
+
+    <span class="cm"># 메서드(method)</span>
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="var">self</span>):
+        <span class="fn">print</span>(<span class="str">f"{<span class="var">self</span>.name}: 멍멍!"</span>)
+
+    <span class="kw">def</span> <span class="fn">info</span>(<span class="var">self</span>):
+        <span class="fn">print</span>(<span class="str">f"이름: {<span class="var">self</span>.name}, 품종: {<span class="var">self</span>.breed}"</span>)
+
+<span class="cm"># 객체 생성</span>
+<span class="var">dog1</span> = <span class="fn">Dog</span>(<span class="str">"멍멍이"</span>, <span class="str">"포메라니안"</span>)
+<span class="var">dog2</span> = <span class="fn">Dog</span>(<span class="str">"초코"</span>, <span class="str">"푸들"</span>)
+
+<span class="var">dog1</span>.bark()
+<span class="var">dog2</span>.info()</div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>상속 (Inheritance)</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="kw">class</span> <span class="fn">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, <span class="var">name</span>):
+        <span class="var">self</span>.name = <span class="var">name</span>
+
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="var">self</span>):
+        <span class="fn">print</span>(<span class="str">"..."</span>)
+
+<span class="kw">class</span> <span class="fn">Cat</span>(<span class="fn">Animal</span>):  <span class="cm"># Animal을 상속!</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="var">self</span>):
+        <span class="fn">print</span>(<span class="str">f"{<span class="var">self</span>.name}: 야옹~"</span>)
+
+<span class="var">cat</span> = <span class="fn">Cat</span>(<span class="str">"나비"</span>)
+<span class="var">cat</span>.speak()   <span class="cm"># 나비: 야옹~</span></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 12</div>
+        <div class="quiz-q">클래스에서 객체가 생성될 때 자동으로 호출되는 메서드는?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l12q1')"><span class="opt-letter">A</span>__start__()</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l12q1')"><span class="opt-letter">B</span>__init__()</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l12q1')"><span class="opt-letter">C</span>__create__()</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l12q1')"><span class="opt-letter">D</span>__begin__()</div>
+        </div>
+        <div class="quiz-result" id="l12q1">✅ 정답! __init__()은 생성자(Constructor)로, 객체가 만들어질 때 자동으로 실행됩니다.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 13 -->
+    <div class="lesson-section" id="sec-l13">
+      <div class="section-title">13. 예외 처리</div>
+      <div class="section-desc">오류가 발생해도 프로그램이 멈추지 않게! try/except로 오류를 우아하게 처리하세요.</div>
+
+      <div class="content-block">
+        <h3>try / except 기본</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="kw">try</span>:
+    <span class="var">num</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"숫자를 입력하세요: "</span>))
+    <span class="fn">print</span>(<span class="num">10</span> / <span class="var">num</span>)
+<span class="kw">except</span> ValueError:
+    <span class="fn">print</span>(<span class="str">"숫자가 아닌 값을 입력했어요!"</span>)
+<span class="kw">except</span> ZeroDivisionError:
+    <span class="fn">print</span>(<span class="str">"0으로 나눌 수 없어요!"</span>)
+<span class="kw">except</span> Exception <span class="kw">as</span> <span class="var">e</span>:
+    <span class="fn">print</span>(<span class="str">f"오류 발생: {<span class="var">e</span>}"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"성공적으로 실행됐어요!"</span>)  <span class="cm"># 오류가 없을 때</span>
+<span class="kw">finally</span>:
+    <span class="fn">print</span>(<span class="str">"항상 실행됩니다."</span>)  <span class="cm"># 오류 여부 관계없이</span></div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>자주 발생하는 오류</h3>
+        <table>
+          <tr><th>오류 종류</th><th>원인</th></tr>
+          <tr><td><code>ValueError</code></td><td>잘못된 값 (문자열을 숫자로 변환 시)</td></tr>
+          <tr><td><code>TypeError</code></td><td>잘못된 타입 (숫자+문자열 연산 등)</td></tr>
+          <tr><td><code>IndexError</code></td><td>리스트 범위 초과</td></tr>
+          <tr><td><code>KeyError</code></td><td>딕셔너리에 없는 키 접근</td></tr>
+          <tr><td><code>ZeroDivisionError</code></td><td>0으로 나누기</td></tr>
+          <tr><td><code>FileNotFoundError</code></td><td>존재하지 않는 파일 열기</td></tr>
+        </table>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 13</div>
+        <div class="quiz-q">try/except에서 오류 여부와 관계없이 항상 실행되는 블록은?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l13q1')"><span class="opt-letter">A</span>else</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l13q1')"><span class="opt-letter">B</span>always</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l13q1')"><span class="opt-letter">C</span>finally</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l13q1')"><span class="opt-letter">D</span>done</div>
+        </div>
+        <div class="quiz-result" id="l13q1">✅ 정답! finally는 오류가 발생하든 안 하든 반드시 실행됩니다. 파일 닫기, 연결 해제 등에 활용해요.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 14 -->
+    <div class="lesson-section" id="sec-l14">
+      <div class="section-title">14. 라이브러리 활용</div>
+      <div class="section-desc">파이썬의 강력한 표준 라이브러리와 외부 패키지를 사용해 더 많은 것을 할 수 있어요!</div>
+
+      <div class="content-block">
+        <h3>자주 쓰는 표준 라이브러리</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="cm"># 수학 - math</span>
+<span class="kw">import</span> math
+<span class="fn">print</span>(math.sqrt(<span class="num">16</span>))   <span class="cm"># 4.0 (제곱근)</span>
+<span class="fn">print</span>(math.pi)           <span class="cm"># 3.14159...</span>
+<span class="fn">print</span>(math.ceil(<span class="num">3.2</span>))   <span class="cm"># 4 (올림)</span>
+
+<span class="cm"># 무작위 - random</span>
+<span class="kw">import</span> random
+<span class="fn">print</span>(random.randint(<span class="num">1</span>, <span class="num">10</span>))      <span class="cm"># 1~10 랜덤 정수</span>
+<span class="fn">print</span>(random.choice([<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"C"</span>]))  <span class="cm"># 랜덤 선택</span>
+
+<span class="cm"># 날짜/시간 - datetime</span>
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="var">now</span> = datetime.now()
+<span class="fn">print</span>(now.strftime(<span class="str">"%Y년 %m월 %d일"</span>))
+
+<span class="cm"># JSON 처리</span>
+<span class="kw">import</span> json
+<span class="var">data</span> = {<span class="str">"name"</span>: <span class="str">"파이썬"</span>, <span class="str">"age"</span>: <span class="num">30</span>}
+<span class="var">json_str</span> = json.dumps(<span class="var">data</span>, ensure_ascii=<span class="kw">False</span>)
+<span class="fn">print</span>(<span class="var">json_str</span>)</div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>외부 패키지 설치 (pip)</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot" style="background:var(--yellow)"></span>Terminal</span></div>
+          <div class="code-content" style="color:#fcd34d;"># 패키지 설치
+pip install requests    # HTTP 요청
+pip install pandas      # 데이터 분석
+pip install numpy       # 수치 계산
+pip install matplotlib  # 그래프 그리기
+pip install flask       # 웹 서버</div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-label">// QUIZ 14</div>
+        <div class="quiz-q">외부 라이브러리를 설치할 때 사용하는 명령어는?</div>
+        <div class="quiz-options">
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l14q1')"><span class="opt-letter">A</span>install numpy</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'correct','l14q1')"><span class="opt-letter">B</span>pip install numpy</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l14q1')"><span class="opt-letter">C</span>python get numpy</div>
+          <div class="quiz-opt" onclick="checkQuiz(this,'wrong','l14q1')"><span class="opt-letter">D</span>import install numpy</div>
+        </div>
+        <div class="quiz-result" id="l14q1">✅ 정답! pip(Python Package Installer)를 사용해 패키지를 설치합니다.</div>
+      </div>
+    </div>
+
+    <!-- LESSON 15 -->
+    <div class="lesson-section" id="sec-l15">
+      <div class="section-title">15. 🎯 미니 프로젝트</div>
+      <div class="section-desc">배운 내용을 모두 활용해 실제 동작하는 프로그램을 만들어봅시다!</div>
+
+      <div class="content-block">
+        <h3>프로젝트 1: 간단한 계산기</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="kw">def</span> <span class="fn">calculator</span>():
+    <span class="fn">print</span>(<span class="str">"=== 간단한 계산기 ==="</span>)
+    
+    <span class="kw">try</span>:
+        <span class="var">a</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"첫 번째 숫자: "</span>))
+        <span class="var">op</span> = <span class="fn">input</span>(<span class="str">"연산자 (+,-,*,/): "</span>)
+        <span class="var">b</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"두 번째 숫자: "</span>))
+        
+        <span class="kw">if</span> <span class="var">op</span> == <span class="str">"+"</span>:   <span class="var">result</span> = <span class="var">a</span> + <span class="var">b</span>
+        <span class="kw">elif</span> <span class="var">op</span> == <span class="str">"-"</span>: <span class="var">result</span> = <span class="var">a</span> - <span class="var">b</span>
+        <span class="kw">elif</span> <span class="var">op</span> == <span class="str">"*"</span>: <span class="var">result</span> = <span class="var">a</span> * <span class="var">b</span>
+        <span class="kw">elif</span> <span class="var">op</span> == <span class="str">"/"</span>:
+            <span class="kw">if</span> <span class="var">b</span> == <span class="num">0</span>: <span class="kw">raise</span> ZeroDivisionError
+            <span class="var">result</span> = <span class="var">a</span> / <span class="var">b</span>
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="str">"올바른 연산자를 입력하세요."</span>)
+            <span class="kw">return</span>
+        
+        <span class="fn">print</span>(<span class="str">f"결과: {<span class="var">a</span>} {<span class="var">op</span>} {<span class="var">b</span>} = {<span class="var">result</span>}"</span>)
+    <span class="kw">except</span> ZeroDivisionError:
+        <span class="fn">print</span>(<span class="str">"0으로 나눌 수 없습니다!"</span>)
+    <span class="kw">except</span> ValueError:
+        <span class="fn">print</span>(<span class="str">"숫자를 올바르게 입력하세요!"</span>)
+
+<span class="fn">calculator</span>()</div>
+        </div>
+      </div>
+
+      <div class="content-block">
+        <h3>프로젝트 2: 성적 관리 프로그램</h3>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang"><span class="code-dot"></span>Python</span><button class="copy-btn" onclick="copyCode(this)">복사</button></div>
+          <div class="code-content"><span class="kw">class</span> <span class="fn">GradeManager</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>):
+        <span class="var">self</span>.students = {}
+
+    <span class="kw">def</span> <span class="fn">add_score</span>(<span class="var">self</span>, <span class="var">name</span>, <span class="var">score</span>):
+        <span class="var">self</span>.students[<span class="var">name</span>] = <span class="var">score</span>
+
+    <span class="kw">def</span> <span class="fn">get_grade</span>(<span class="var">self</span>, <span class="var">score</span>):
+        <span class="kw">if</span> <span class="var">score</span> >= <span class="num">90</span>: <span class="kw">return</span> <span class="str">"A"</span>
+        <span class="kw">elif</span> <span class="var">score</span> >= <span class="num">80</span>: <span class="kw">return</span> <span class="str">"B"</span>
+        <span class="kw">elif</span> <span class="var">score</span> >= <span class="num">70</span>: <span class="kw">return</span> <span class="str">"C"</span>
+        <span class="kw">else</span>: <span class="kw">return</span> <span class="str">"F"</span>
+
+    <span class="kw">def</span> <span class="fn">report</span>(<span class="var">self</span>):
+        <span class="fn">print</span>(<span class="str">"\n📊 성적표"</span>)
+        <span class="fn">print</span>(<span class="str">"-" * 30</span>)
+        <span class="kw">for</span> <span class="var">name</span>, <span class="var">score</span> <span class="kw">in</span> <span class="var">self</span>.students.items():
+            <span class="var">grade</span> = <span class="var">self</span>.get_grade(<span class="var">score</span>)
+            <span class="fn">print</span>(<span class="str">f"{<span class="var">name</span>:6} | {<span class="var">score</span>:3}점 | {<span class="var">grade</span>}학점"</span>)
+        <span class="var">avg</span> = <span class="fn">sum</span>(<span class="var">self</span>.students.values()) / <span class="fn">len</span>(<span class="var">self</span>.students)
+        <span class="fn">print</span>(<span class="str">f"\n평균: {<span class="var">avg</span>:.1f}점"</span>)
+
+<span class="cm"># 실행</span>
+<span class="var">gm</span> = <span class="fn">GradeManager</span>()
+<span class="var">gm</span>.add_score(<span class="str">"김철수"</span>, <span class="num">92</span>)
+<span class="var">gm</span>.add_score(<span class="str">"이수진"</span>, <span class="num">78</span>)
+<span class="var">gm</span>.add_score(<span class="str">"박민준"</span>, <span class="num">85</span>)
+<span class="var">gm</span>.report()</div>
+        </div>
+      </div>
+
+      <div class="highlight" style="text-align:center;font-size:15px;padding:24px;">
+        🎉 <strong>축하합니다!</strong><br>
+        파이썬 기초부터 심화까지 모든 과정을 완료했습니다!<br>
+        이제 여러분은 파이썬으로 실제 프로그램을 만들 수 있어요!
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div class="lesson-footer">
+    <div class="lesson-nav">
+      <button class="btn btn-outline" id="btn-prev" onclick="navigate(-1)">← 이전</button>
+      <button class="btn btn-outline" id="btn-next" onclick="navigate(1)">다음 →</button>
+    </div>
+    <button class="btn btn-green" id="btn-complete" onclick="markComplete()">✓ 학습 완료</button>
+  </div>
+</div>
+
+
+<!-- ── DISCORD MODAL ── -->
+<div class="modal-overlay" id="discord-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+      </div>
+      <div>
+        <div class="modal-title">디스코드로 전송</div>
+        <div class="modal-sub">학습 진도를 디스코드 채널에 공유합니다</div>
+      </div>
+      <button class="modal-close" onclick="closeDiscordModal()">×</button>
+    </div>
+
+    <div class="webhook-help">
+      📌 <strong>웹훅 URL 얻는 방법:</strong><br>
+      디스코드 채널 설정 → 연동 → <code>웹후크</code> → 새 웹후크 만들기 → URL 복사
+    </div>
+
+    <div class="modal-label">웹훅 URL (Webhook URL)</div>
+    <input class="modal-input" id="webhook-url" type="text"
+      placeholder="https://discord.com/api/webhooks/..." 
+      oninput="updatePreview()" />
+
+    <div class="modal-label">보내는 사람 이름 (선택)</div>
+    <input class="modal-input" id="webhook-name" type="text"
+      placeholder="예: 김파이썬" 
+      oninput="updatePreview()" />
+
+    <div class="modal-label">미리보기</div>
+    <div class="modal-preview" id="discord-preview">
+      웹훅 URL을 입력하면 미리보기가 표시됩니다.
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeDiscordModal()">취소</button>
+      <button class="btn-discord" id="send-btn" onclick="sendToDiscord()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        전송하기
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+const lessons = ['home','l1','l2','l3','l4','l5','l6','l7','l8','l9','l10','l11','l12','l13','l14','l15'];
+const lessonNames = {
+  home:'시작하기', l1:'파이썬이란?', l2:'변수와 데이터 타입', l3:'출력과 입력',
+  l4:'연산자', l5:'조건문 (if/else)', l6:'반복문 (for/while)',
+  l7:'리스트와 튜플', l8:'딕셔너리와 집합', l9:'함수 만들기',
+  l10:'문자열 다루기', l11:'파일 입출력', l12:'클래스와 객체 (OOP)',
+  l13:'예외 처리', l14:'라이브러리 활용', l15:'미니 프로젝트'
+};
+const tags = {
+  home:'HOME', l1:'BASIC 01', l2:'BASIC 02', l3:'BASIC 03', l4:'BASIC 04',
+  l5:'BASIC 05', l6:'BASIC 06', l7:'MID 07', l8:'MID 08', l9:'MID 09',
+  l10:'MID 10', l11:'MID 11', l12:'ADV 12', l13:'ADV 13', l14:'ADV 14', l15:'ADV 15'
+};
+
+let currentLesson = 'home';
+let completed = {};
+const STORAGE_KEY = 'python_master_progress';
+
+// ── window.storage API 기반 저장 (claude.ai 영구 저장 지원) ──
+
+async function loadProgress() {
+  try {
+    const result = await window.storage.get(STORAGE_KEY);
+    if (result && result.value) {
+      completed = JSON.parse(result.value);
+      Object.keys(completed).forEach(id => {
+        const chk = document.getElementById(`chk-${id}`);
+        if (chk) { chk.textContent = '✓'; chk.style.color = 'var(--green)'; }
+      });
+      updateProgress();
+      updateSaveStatus('마지막 저장: 불러오기 완료 ✓');
+    }
+  } catch(e) {
+    // 저장된 데이터 없음 - 처음 시작
+  }
+}
+
+async function saveProgress() {
+  try {
+    const result = await window.storage.set(STORAGE_KEY, JSON.stringify(completed));
+    if (result) {
+      showToast('💾 저장 완료! 다음에 접속해도 진도가 유지됩니다.');
+      updateSaveStatus('저장됨 ✓ ' + new Date().toLocaleTimeString('ko-KR'));
+    } else {
+      showToast('⚠️ 저장에 실패했습니다. 다시 시도해주세요.');
+    }
+  } catch(e) {
+    showToast('⚠️ 저장 오류: ' + e.message);
+  }
+}
+
+async function resetProgress() {
+  if (confirm('학습 진도를 초기화하겠습니까?\n완료한 강의 기록이 모두 삭제됩니다.')) {
+    completed = {};
+    try {
+      await window.storage.delete(STORAGE_KEY);
+    } catch(e) {}
+    document.querySelectorAll('.nav-check').forEach(el => { el.textContent = '○'; el.style.color = ''; });
+    updateProgress();
+    updateSaveStatus('초기화됨');
+    showToast('🔄 진도가 초기화되었습니다.');
+  }
+}
+
+function updateSaveStatus(msg) {
+  const el = document.getElementById('save-status');
+  if (el) el.textContent = msg;
+}
+
+function updateProgress() {
+  const total = lessons.length - 1;
+  const done = Object.keys(completed).length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = pct + '%';
+}
+
+function showLesson(id, navEl) {
+  document.querySelectorAll('.lesson-section').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  
+  document.getElementById('sec-' + id).classList.add('visible');
+  if (navEl) navEl.classList.add('active');
+  else {
+    const items = document.querySelectorAll('.nav-item');
+    items.forEach(item => { if (item.dataset.lesson === id) item.classList.add('active'); });
+  }
+  
+  document.getElementById('topbar-tag').textContent = tags[id] || id;
+  document.getElementById('topbar-title').textContent = lessonNames[id] || id;
+  document.getElementById('content').scrollTop = 0;
+  currentLesson = id;
+  
+  document.getElementById('btn-complete').style.display = id === 'home' ? 'none' : '';
+  document.getElementById('btn-prev').disabled = id === 'home';
+}
+
+function navigate(dir) {
+  const idx = lessons.indexOf(currentLesson);
+  const next = lessons[idx + dir];
+  if (next) showLesson(next, null);
+}
+
+async function markComplete() {
+  if (currentLesson === 'home') return;
+  completed[currentLesson] = true;
+  const chk = document.getElementById(`chk-${currentLesson}`);
+  if (chk) { chk.textContent = '✓'; chk.style.color = 'var(--green)'; }
+  updateProgress();
+  await saveProgress();
+  
+  const idx = lessons.indexOf(currentLesson);
+  if (idx < lessons.length - 1) {
+    setTimeout(() => navigate(1), 1000);
+  }
+}
+
+function checkQuiz(el, type, resultId) {
+  const box = el.closest('.quiz-box');
+  const opts = box.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; });
+  
+  if (type === 'correct') {
+    el.classList.add('correct');
+    document.getElementById(resultId).className = 'quiz-result show ok';
+  } else {
+    el.classList.add('wrong');
+    document.getElementById(resultId).className = 'quiz-result show fail';
+    document.getElementById(resultId).innerHTML = '❌ 틀렸어요! 다시 한번 내용을 확인해보세요.';
+  }
+}
+
+function copyCode(btn) {
+  const code = btn.closest('.code-block').querySelector('.code-content');
+  const text = code.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '복사됨!';
+    setTimeout(() => btn.textContent = '복사', 1500);
+  });
+}
+
+function runCode(btn) {
+  const box = btn.closest('.practice-box');
+  const output = box.querySelector('.output-area');
+  output.classList.add('show');
+  output.textContent = '▶ 시뮬레이션 실행 결과:\n\n(실제 파이썬 실행 환경이 아니므로, 코드를 직접 파이썬 IDLE 또는\nVS Code에서 실행해보세요! 작성한 코드의 구조를 잘 확인해보세요.)';
+}
+
+function showHint(btn, hint) {
+  const box = btn.closest('.practice-box');
+  const editor = box.querySelector('.editor-area');
+  editor.value = hint;
+  showToast('💡 힌트 코드가 표시되었습니다!');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+
+// ── DISCORD WEBHOOK ──
+const lessonFullNames = {
+  l1:'01. 파이썬이란?', l2:'02. 변수와 데이터 타입', l3:'03. 출력과 입력',
+  l4:'04. 연산자', l5:'05. 조건문 (if/else)', l6:'06. 반복문 (for/while)',
+  l7:'07. 리스트와 튜플', l8:'08. 딕셔너리와 집합', l9:'09. 함수 만들기',
+  l10:'10. 문자열 다루기', l11:'11. 파일 입출력', l12:'12. 클래스와 객체 (OOP)',
+  l13:'13. 예외 처리', l14:'14. 라이브러리 활용', l15:'15. 미니 프로젝트'
+};
+
+function openDiscordModal() {
+  document.getElementById('discord-modal').classList.add('open');
+  updatePreview();
+}
+
+function closeDiscordModal() {
+  document.getElementById('discord-modal').classList.remove('open');
+}
+
+function getProgressSummary() {
+  const total = lessons.length - 1;
+  const done = Object.keys(completed).length;
+  const pct = Math.round((done / total) * 100);
+  const completedList = Object.keys(completed).map(id => '✅ ' + (lessonFullNames[id] || id));
+  const remaining = lessons.filter(l => l !== 'home' && !completed[l]).map(id => '⬜ ' + (lessonFullNames[id] || id));
+  return { total, done, pct, completedList, remaining };
+}
+
+function updatePreview() {
+  const name = document.getElementById('webhook-name').value.trim() || '학습자';
+  const { total, done, pct, completedList } = getProgressSummary();
+  const bar = '█'.repeat(Math.round(pct/10)) + '░'.repeat(10 - Math.round(pct/10));
+
+  const preview = document.getElementById('discord-preview');
+  preview.innerHTML = `
+    <strong>🐍 파이썬 마스터 학습 진도 공유</strong><br><br>
+    👤 <strong>${name}</strong>님의 학습 현황<br>
+    📊 진도율: <strong>${pct}%</strong> (${done}/${total} 강의)<br>
+    ${bar}<br><br>
+    ${completedList.length > 0 ? '완료한 강의:<br>' + completedList.slice(0,5).join('<br>') + (completedList.length > 5 ? '<br>... 외 ' + (completedList.length-5) + '개' : '') : '아직 완료한 강의가 없습니다.'}
+  `;
+}
+
+async function sendToDiscord() {
+  const url = document.getElementById('webhook-url').value.trim();
+  const name = document.getElementById('webhook-name').value.trim() || '익명 학습자';
+  const btn = document.getElementById('send-btn');
+
+  if (!url || !url.startsWith('https://discord.com/api/webhooks/')) {
+    showToast('⚠️ 올바른 디스코드 웹훅 URL을 입력하세요!');
+    document.getElementById('webhook-url').focus();
+    return;
+  }
+
+  const { total, done, pct, completedList, remaining } = getProgressSummary();
+  const bar = '█'.repeat(Math.round(pct/10)) + '░'.repeat(10 - Math.round(pct/10));
+  const now = new Date().toLocaleString('ko-KR');
+
+  const completedText = completedList.length > 0 
+    ? completedList.join('\n') 
+    : '아직 완료한 강의가 없습니다.';
+  const remainText = remaining.length > 0 
+    ? remaining.join('\n') 
+    : '모든 강의를 완료했습니다! 🎉';
+
+  const payload = {
+    username: '🐍 Python Master Bot',
+    avatar_url: 'https://www.python.org/static/favicon.ico',
+    embeds: [{
+      title: '📚 파이썬 마스터 학습 진도 리포트',
+      color: 0x3b82f6,
+      author: { name: name + '님의 학습 현황' },
+      fields: [
+        {
+          name: '📊 전체 진도율',
+          value: '**' + pct + '%** (' + done + '/' + total + ' 강의 완료)\n`' + bar + '`',
+          inline: false
+        },
+        {
+          name: '✅ 완료한 강의 (' + done + '개)',
+          value: completedList.slice(0, 8).join('\n') || '없음',
+          inline: true
+        },
+        {
+          name: '⬜ 남은 강의 (' + remaining.length + '개)',
+          value: remaining.slice(0, 8).join('\n') || '없음',
+          inline: true
+        }
+      ],
+      footer: { text: '🕐 ' + now + ' • Python Master 교재' },
+      thumbnail: { url: 'https://www.python.org/static/favicon.ico' }
+    }]
+  };
+
+  btn.disabled = true;
+  btn.innerHTML = '<span>전송 중...</span>';
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok || res.status === 204) {
+      showToast('✅ 디스코드에 전송 성공!');
+      closeDiscordModal();
+    } else {
+      const errText = await res.text();
+      showToast('❌ 전송 실패 (HTTP ' + res.status + ')');
+      console.error('Discord webhook error:', errText);
+    }
+  } catch (e) {
+    showToast('❌ 네트워크 오류: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> 전송하기';
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('discord-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeDiscordModal();
+});
+
+// Init
+(async () => {
+  showLesson("home", document.querySelector("[data-lesson=\"home\"]"));
+  await loadProgress();
+})();
+</script>
+</body>
+</html>
